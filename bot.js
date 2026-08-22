@@ -133,18 +133,36 @@ sock.ev.on("connection.update", async (update) => {
              * Body pesan
              */
             m.body = [
-                m.message?.conversation,
-                m.message?.extentedTextMessage?.text,
-                m.message?.imageMessage?.caption,
-                m.message?.videoMessage?.caption,
-                m.message?.documentMessage?.caption
-            ]
-                .find(
-                    v =>
-                        typeof v === "string" &&
-                        v.trim()
-                )
-                ?.trim() || "";
+    m.message?.conversation,
+    m.message?.extendedTextMessage?.text,
+
+    m.message?.imageMessage?.caption,
+    m.message?.videoMessage?.caption,
+    m.message?.documentMessage?.caption,
+
+    m.message?.buttonsResponseMessage?.selectedDisplayText,
+    m.message?.listResponseMessage?.title,
+    m.message?.listResponseMessage?.description,
+    m.message?.templateButtonReplyMessage?.selectedDisplayText,
+
+    m.message?.interactiveResponseMessage
+        ?.body?.text,
+
+    m.message?.editedMessage
+        ?.message
+        ?.conversation,
+
+    m.message?.editedMessage
+        ?.message
+        ?.extendedTextMessage
+        ?.text
+]
+    .find(
+        v =>
+            typeof v === "string" &&
+            v.trim()
+    )
+    ?.trim() || "";
 
             /*
              * Cache pesan
