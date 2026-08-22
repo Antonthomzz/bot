@@ -13,7 +13,7 @@ const downloadMedia = async (media, type) => {
 quote = {
     quoted: {
         key: {
-            remoteJid: 'status@broadcast',
+            remoteJid: '0@s.whatsapp.net',
             fromMe: false,
             participant: '0@s.whatsapp.net'
         },
@@ -42,7 +42,16 @@ export const feature = async (sock, m) => {
                     responseType: "json"
                 });
 
-                if (res?.data?.play) await sock.sendMessage(m.chat, { video: { url: res.data.play } }, { quoted: m });
+                if (res?.data?.play) await sock.sendMessage(m.chat, { video: { url: res.data.play } }, { quoted: {
+        key: {
+            remoteJid: '0@s.whatsapp.net',
+            fromMe: false,
+            participant: '0@s.whatsapp.net'
+        },
+        message: {
+            conversation: url
+        }
+    }});
             } catch {
                 m.reply("gagal download vidio tiktok", quote);
             }
