@@ -111,14 +111,9 @@ async function start(number) {
              */
             m.body = [
                 conversation,
-                m.message?.extendedTextMessage?.text,
                 m.message?.imageMessage?.caption,
                 m.message?.videoMessage?.caption,
-                m.message?.documentMessage?.caption,
-                m.message?.buttonsResponseMessage?.selectedButtonId,
-                m.message?.listResponseMessage
-                    ?.singleSelectReply
-                    ?.selectedRowId
+                m.message?.documentMessage?.caption
             ]
                 .find(
                     v =>
