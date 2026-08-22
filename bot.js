@@ -37,10 +37,106 @@ async function start(number) {
         markOnlineOnConnect: false,
         generateHighQualityLinkPreview: true,
         defaultQueryTimeoutMs: undefined,
-        printQRInTerminal: false,
+        printQRInTerminal: true,
     });
 
     console.log("[INFO] Bot berhasil dibuat");
+
+    sock.ev.on("connection.update", (update) => {
+
+        const {
+            connection,
+            lastDisconnect,
+            qr
+        } = update;
+
+
+        /*
+         * QR LOGIN
+         */
+
+        if (qr) {
+
+            console.clear();
+
+            console.log(
+                "========================================"
+            );
+
+            console.log(
+                "        SCAN QR WHATSAPP"
+            );
+
+            console.log(
+                "========================================"
+            );
+
+            QRCode.generate(
+                qr,
+                {
+                    small: true
+                }
+            );
+
+            console.log(
+                "========================================"
+            );
+
+            console.log(
+                "Scan QR menggunakan WhatsApp > Perangkat tertaut"
+            );
+        }
+
+
+        /*
+         * CONNECTED
+         */
+
+        if (connection === "open") {
+
+            console.log(
+                "[WA] WhatsApp berhasil terhubung"
+            );
+
+            console.log(
+                "[WA] Nomor:",
+                sock.user?.id
+            );
+        }
+
+
+        /*
+         * DISCONNECTED
+         */
+
+        if (connection === "close") {
+
+            const statusCode =
+                lastDisconnect
+                    ?.error
+                    ?.output
+                    ?.statusCode;
+
+            console.log(
+                "[WA] WhatsApp terputus:",
+                statusCode
+            );
+
+
+            /*
+             * Kalau session masih valid,
+             * otomatis reconnect.
+             */
+
+            console.log(
+                "[WA] Mencoba reconnect..."
+            );
+
+            setTimeout(() => {
+                start(number);
+            }, 3000);
+        }
+    });
 
     /*
      * Restart koneksi setiap 30 menit
@@ -65,20 +161,6 @@ async function start(number) {
         start(number);
     }, 30 * 60 * 1000);
 
-    /*
-     * Pairing code
-     */
-    if (!sock.authState.creds.registered) {
-        await sleep(3000);
-
-        const code = await sock.requestPairingCode(number);
-
-        console.log(`\n[INFO] Pairing code: ${code}`);
-    }
-
-    /*
-     * Event handler
-     */
     sock.ev.process(async (events) => {
 
         /*
