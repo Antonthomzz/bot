@@ -20,7 +20,7 @@
     "midtrans-client": "^1.4.3",
     "path": "^0.12.7",
     "pino": "latest",
-    "qrcode-terminal": "latest",
+    "qrcode": "latest",
     "util": "^0.12.5"
   }
 }
