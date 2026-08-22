@@ -133,7 +133,8 @@ sock.ev.on("connection.update", async (update) => {
              * Body pesan
              */
             m.body = [
-                conversation,
+                m.message?.conversation,
+                m.message?.extentedTextMessage?.text,
                 m.message?.imageMessage?.caption,
                 m.message?.videoMessage?.caption,
                 m.message?.documentMessage?.caption
