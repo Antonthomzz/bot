@@ -49,7 +49,7 @@ export const feature = async (sock, m) => {
             participant: '0@s.whatsapp.net'
         },
         message: {
-            conversation: url
+            conversation: "Vidio TikTok di download"
         }
     }});
             } catch {
