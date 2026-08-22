@@ -1,8 +1,7 @@
 import "@antonthomzz/travex";
 
 import Pino from "pino";
-import QRCode from "qrcode-terminal";
-
+import QRCode from "qrcode";
 import {
     makeWASocket,
     Browsers,
@@ -41,102 +40,44 @@ async function start(number) {
     });
 
     console.log("[INFO] Bot berhasil dibuat");
+sock.ev.on("connection.update", async (update) => {
 
-    sock.ev.on("connection.update", (update) => {
+    const {
+        connection,
+        lastDisconnect,
+        qr
+    } = update;
 
-        const {
-            connection,
-            lastDisconnect,
-            qr
-        } = update;
+    if (qr) {
 
+        const qrUrl = await QRCode.toDataURL(qr, {
+            width: 400,
+            margin: 2
+        });
 
-        /*
-         * QR LOGIN
-         */
+        console.log("[WA] QR URL:");
+        console.log(qrUrl);
+    }
 
-        if (qr) {
+    if (connection === "open") {
 
-            console.clear();
+        console.log(
+            "[WA] WhatsApp connected:",
+            sock.user?.id
+        );
+    }
 
-            console.log(
-                "========================================"
-            );
+    if (connection === "close") {
 
-            console.log(
-                "        SCAN QR WHATSAPP"
-            );
+        console.log(
+            "[WA] Connection closed"
+        );
 
-            console.log(
-                "========================================"
-            );
-
-            QRCode.generate(
-                qr,
-                {
-                    small: true
-                }
-            );
-
-            console.log(
-                "========================================"
-            );
-
-            console.log(
-                "Scan QR menggunakan WhatsApp > Perangkat tertaut"
-            );
-        }
-
-
-        /*
-         * CONNECTED
-         */
-
-        if (connection === "open") {
-
-            console.log(
-                "[WA] WhatsApp berhasil terhubung"
-            );
-
-            console.log(
-                "[WA] Nomor:",
-                sock.user?.id
-            );
-        }
-
-
-        /*
-         * DISCONNECTED
-         */
-
-        if (connection === "close") {
-
-            const statusCode =
-                lastDisconnect
-                    ?.error
-                    ?.output
-                    ?.statusCode;
-
-            console.log(
-                "[WA] WhatsApp terputus:",
-                statusCode
-            );
-
-
-            /*
-             * Kalau session masih valid,
-             * otomatis reconnect.
-             */
-
-            console.log(
-                "[WA] Mencoba reconnect..."
-            );
-
-            setTimeout(() => {
-                start(number);
-            }, 3000);
-        }
-    });
+        setTimeout(() => {
+            start(number);
+        }, 3000);
+    }
+});
 
     /*
      * Restart koneksi setiap 30 menit
